@@ -75,7 +75,7 @@ static void* producer_thread(void *arg) {
 static void* dispatcher_thread_func(void *arg) {
     SystemContext *ctx = (SystemContext*)arg;
     int num = ctx->num_producers;
-    bool *active = safe_malloc(sizeof(bool) * num);
+    bool *active = safeMalloc(sizeof(bool) * num);
     for (int i = 0; i < num; i++) {
         active[i] = true;
     }
@@ -170,11 +170,11 @@ static void* screen_writer_thread_func(void *arg) {
  */
 void startThreads(SystemContext *ctx) {
     num_producer_threads = ctx->num_producers;
-    producer_threads = safe_malloc(sizeof(pthread_t) * num_producer_threads);
+    producer_threads = safeMalloc(sizeof(pthread_t) * num_producer_threads);
     
     /* Start producer threads */
     for (int i = 0; i < num_producer_threads; i++) {
-        ProducerArgs *args = safe_malloc(sizeof(ProducerArgs));
+        ProducerArgs *args = safeMalloc(sizeof(ProducerArgs));
         args->ctx = ctx;
         args->producer_id = i;
         pthread_create(&producer_threads[i], NULL, producer_thread, args);
@@ -185,7 +185,7 @@ void startThreads(SystemContext *ctx) {
     
     /* Start co-producer threads */
     for (int i = 0; i < 3; i++) {
-        CoProducerArgs *args = safe_malloc(sizeof(CoProducerArgs));
+        CoProducerArgs *args = safeMalloc(sizeof(CoProducerArgs));
         args->ctx = ctx;
         args->news_type = i;
         pthread_create(&co_producer_threads[i], NULL, co_producer_thread_func, args);
