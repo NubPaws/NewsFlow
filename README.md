@@ -1,62 +1,65 @@
-# Multithreaded News Processing System
+# Multithreaded System Runner
 
-This project is a multithreaded news processing system written in C. It simulates a news production pipeline where multiple producer threads generate news articles, a dispatcher thread routes these articles to different news categories (NEWS, SPORTS, and WEATHER), and co-producer threads further process the articles before they are displayed by a screen writer thread.
+This project is a multithreaded C program that initializes a custom system context from a configuration file, spawns multiple threads to perform defined tasks, and manages the lifecycle of the system.
 
 ## Features
+- Dynamic system initialization from a configuration file
+- Thread management (creation, joining, cleanup)
+- Safe memory allocation utilities
+- Configurable system behavior
+- Custom thread functions
+- Internal queue structure for thread communication (if applicable)
 
-- **Multithreading:** Utilizes POSIX threads (pthreads) to concurrently handle news production, dispatching, and screen writing.
-- **Thread-Safe Queues:** Implements both unbounded and bounded queues with semaphore-based synchronization to ensure safe concurrent access.
-- **Modular Design:** Organized into clear modules for configuration, memory allocation, queue management, and thread functionality to enhance maintainability and scalability.
-
-## Configuration File Format
-
-The application is configured via a text file that specifies the setup for producer queues and the screen queue.
-
-- **Producer Configuration:**  
-  Each producer is defined by three integers:
-  1. **Producer ID (dummy value):** An identifier for the producer.
-  2. **Article Count:** The number of articles the producer will generate.
-  3. **Producer Queue Capacity:** The maximum number of items the producer’s bounded queue can hold.
-
-- **Screen Queue Configuration:**  
-  After listing all producers, a single integer is provided to specify the capacity of the screen queue.
-
-### Example Config File (`config.txt`)
+## File Structure
 ```
-1 30 5
+include/             # Header files
+  config.h
+  queue.h
+  safe_alloc.h
+  system.h
+  thread_funcs.h
+  types.h
 
-2 25 3
+src/                 # Source files
+  config.c
+  main.c
+  queue.c
+  safe_alloc.c
+  thread_funcs.c
 
-3 16 30
-
-4 18 2
-
-5 12 50
-
-17
+config.txt           # Example configuration file
+Makefile             # For building the project
+README.md            # Project documentation
+.gitignore           # Git ignore rules
+app                  # Output binary (after build)
 ```
-
-In this example:
-- There are **5 producers**.
-  - **Producer 1:** Produces 30 articles; its bounded queue has a capacity of 5.
-  - **Producer 2:** Produces 25 articles; its bounded queue has a capacity of 3.
-  - **Producer 3:** Produces 16 articles; its bounded queue has a capacity of 30.
-  - **Producer 4:** Produces 18 articles; its bounded queue has a capacity of 2.
-  - **Producer 5:** Produces 12 articles; its bounded queue has a capacity of 50.
-- The last line (`17`) defines the capacity of the **screen queue**.
 
 ## Building the Project
+Make sure you have `gcc` or another C compiler installed, then run:
 
-You can compile the project using a Makefile or directly with `gcc`. For example:
-
-```bash
-gcc -pthread -Iinclude src/*.c -o news_system
+```sh
+make
 ```
 
-## Running the Project
-Once compiled, run the executable by passing the configuration file as an argument:
+This will compile the source files and generate an executable named `app`.
 
-```bash
-./news_system config.txt
+## Running the Program
+Run the compiled executable with a configuration file as an argument:
+
+```sh
+./app config.txt
 ```
-The system will simulate the news production process and output the news articles (categorized as NEWS, SPORTS, or WEATHER) to the standard output.
+
+## Configuration
+The system reads settings from `config.txt`. Ensure it contains the expected format for your application. You can define things like:
+- Number of threads
+- Task types
+- Timing constraints
+
+Refer to `config.h` and `config.c` for specific keys and formats supported.
+
+## Thread System
+The threading model is defined in `thread_funcs.h` and implemented in `thread_funcs.c`. Threads are created and managed via the `startThreads` and `joinThreads` functions.
+
+## Memory Safety
+The `safe_alloc.h` module wraps memory allocation functions to add checks and safety against failures.
