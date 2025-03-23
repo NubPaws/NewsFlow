@@ -15,4 +15,6 @@
  */
 SystemContext* initSystem(const char *filename);
 
+void disposeSystem(SystemContext *ctx);
+
 #endif // _CONFIG_H

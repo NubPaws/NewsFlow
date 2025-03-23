@@ -11,7 +11,6 @@
 //       <dummy> <producerArticleCount> <producerQueueCapacity>
 //   Followed by a single integer indicating the screen queue size.
 //
-
 SystemContext* initSystem(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -53,4 +52,20 @@ SystemContext* initSystem(const char *filename) {
     
     fclose(file);
     return ctx;
+}
+
+void disposeSystem(SystemContext *ctx) {
+    /* Clean up producer queues. */
+    for (int i = 0; i < ctx->num_producers; i++) {
+        bqDelete(ctx->producer_queues[i]);
+    }
+    free(ctx->producer_queues);
+    free(ctx->producer_counts);
+    
+    /* Clean up news queues and screen queue. */
+    for (int i = 0; i < 3; i++) {
+        qDelete(ctx->news_queues[i]);
+    }
+    bqDelete(ctx->screen_queue);
+    free(ctx);
 }
